@@ -73,6 +73,22 @@ abstract class PHPParser_NodeAbstract implements PHPParser_Node, IteratorAggrega
         $this->docComment = $docComment;
     }
 
+    public function get($path) {
+        $path = str_replace("->", "/", $path);
+        $parts = explode("/", $path);
+        $stmts = $this->stmts;
+        foreach ($parts as $part) {
+            foreach($stmts as $stmt){
+                if($stmt->name == $part){
+                    $stmts = $stmt->stmts;
+                    break;
+                }
+            }
+        }
+
+        return $stmt;
+    }
+
     /* Magic interfaces */
 
     public function &__get($name) {
