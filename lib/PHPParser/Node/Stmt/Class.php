@@ -82,4 +82,57 @@ class PHPParser_Node_Stmt_Class extends PHPParser_Node_Stmt
             throw new PHPParser_Error('Cannot use the final modifier on an abstract class member');
         }
     }
+
+    /**
+     * Usability API
+     */
+    
+    public function add($stmts) {
+        if(is_array($stmts))
+            foreach ($stmts as $stmt)
+                $this->subNodes["stmts"][] = $stmt;
+        else
+            $this->subNodes["stmts"][] = $stmts;
+
+        return $this;
+    }
+
+    public function addMethod($stmt) {
+        $this->subNodes["stmts"][] = $stmt;
+        return $this;
+    }
+
+    public function addProperty($stmt) {
+        $this->subNodes["stmts"][] = $stmt;
+        return $this;
+    }
+
+    public function getMethods() {
+        return $this->getByType("ClassMethod");
+    }
+
+    public function getMethod($name) {
+        $results = array();
+        if(is_array($this->stmts)){
+            foreach ($this->stmts as $key => $value) {
+                if($value->name == $name)
+                    return $value;
+            }
+        }
+    }
+
+    public function getProperties() {
+        return $this->getByType("Property");
+    }
+
+    public function getProperty($name) {
+        $results = array();
+        if(is_array($this->stmts)){
+            foreach ($this->stmts as $key => $value) {
+                $prop = current($value->getByType("PropertyProperty"));
+                if($prop->name == $name)
+                    return $value;
+            }
+        }
+    }
 }

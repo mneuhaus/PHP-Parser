@@ -23,4 +23,13 @@ class PHPParser_Node_Stmt_Property extends PHPParser_Node_Stmt
             $line, $docComment
         );
     }
+
+    public function &__get($name) {
+        // Utility function to access the PropertyProperties name from here
+        if($name == "name"){
+            $propertyProperty = current($this->getByType("PropertyProperty"));
+            return $propertyProperty->__get($name);
+        }
+        return $this->subNodes[$name];
+    }
 }
