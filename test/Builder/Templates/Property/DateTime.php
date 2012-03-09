@@ -1,17 +1,17 @@
 <?php
 
-class PropertyTemplate {
+class Property_DateTime {
 	/**
 	 * My awesome __Property
 	 *
-	 * @var string
+	 * @var DateTime
 	 **/
 	protected $__property;
 
 	/**
 	 * Getter for __property
 	 *
-	 * @return string
+	 * @return DateTime
 	 **/
 	public function get__Property() {
 		return $this->__property;
@@ -20,12 +20,11 @@ class PropertyTemplate {
 	/**
 	 * Setter for __property
 	 *
-	 * @param string $__property
+	 * @param DateTime $__property
 	 **/
 	public function set__Property($__property) {
-		// some nonsense logic
-		if($__property == "foo"){
-			throw new Exception("Foo isn't allowed here...", 1);
+		if(!$__property instanceof DateTime){
+			throw new Exception("Only DateTime allowed", 1);
 		}
 		$this->__property = $__property;
 	}
