@@ -1,5 +1,9 @@
 <?php
 class PHPParser_Builder {
+    const CONFLICT_IGNORE   = 1;
+    const CONFLICT_REPLACE  = 2;
+    const CONFLICT_APPEND   = 4;
+    const CONFLICT_PREPEND  = 8;
 
     /**
      *

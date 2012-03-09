@@ -87,23 +87,46 @@ class PHPParser_Node_Stmt_Class extends PHPParser_Node_Stmt
      * Usability API
      */
     
-    public function add($stmts) {
-        if(is_array($stmts))
-            foreach ($stmts as $stmt)
-                $this->subNodes["stmts"][] = $stmt;
-        else
-            $this->subNodes["stmts"][] = $stmts;
+    public function add($stmts, $conflict = PHPParser_Builder::CONFLICT_IGNORE) {
+        if(is_array($stmts)){
+            foreach ($stmts as $stmt){
+                $this->add($stmt, $conflict);
+            }
+        } else {
+            if(!$this->hasStatement($stmts)){
+                $this->subNodes["stmts"][] = $stmts;
+            }else{
+                switch ($conflict) {
+                    case PHPParser_Builder::CONFLICT_REPLACE:
+                            $this->removeStatement($stmts);
+                            $this->add($stmts);
+                        break;
+
+                    case PHPParser_Builder::CONFLICT_APPEND:
+                            $this->get($stmts->name)->append($stmts->getStatements());
+                        break;
+
+                    case PHPParser_Builder::CONFLICT_PREPEND:
+                            $this->get($stmts->name)->prepend($stmts->getStatements());
+                        break;
+
+                    case PHPParser_Builder::CONFLICT_IGNORE:
+                    default:
+                        break;
+                }
+            }
+        }
 
         return $this;
     }
 
-    public function addMethod($stmt) {
-        $this->subNodes["stmts"][] = $stmt;
+    public function addMethod($stmt, $conflict = PHPParser_Builder::CONFLICT_IGNORE) {
+        $this->add($stmt);
         return $this;
     }
 
-    public function addProperty($stmt) {
-        $this->subNodes["stmts"][] = $stmt;
+    public function addProperty($stmt, $conflict = PHPParser_Builder::CONFLICT_IGNORE) {
+        $this->add($stmt);
         return $this;
     }
 
@@ -125,6 +148,15 @@ class PHPParser_Node_Stmt_Class extends PHPParser_Node_Stmt
         return $this->getByType("Property");
     }
 
+    public function hasStatement($stmt) {
+        $name = $stmt->name;
+        foreach ($this->subNodes["stmts"] as $stmt) {
+            if($stmt->name == $name)
+                return true;
+        }
+        return false;
+    }
+
     public function getProperty($name) {
         $results = array();
         if(is_array($this->stmts)){
@@ -133,6 +165,14 @@ class PHPParser_Node_Stmt_Class extends PHPParser_Node_Stmt
                 if($prop->name == $name)
                     return $value;
             }
+        }
+    }
+
+    public function removeStatement($stmt) {
+        $name = $stmt->name;
+        foreach ($this->stmts as $key => $stmt) {
+            if($stmt->name == $name)
+                unset($this->stmts[$key]);
         }
     }
 }

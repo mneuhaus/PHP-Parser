@@ -40,4 +40,22 @@ class PHPParser_Node_Stmt_ClassMethod extends PHPParser_Node_Stmt
             throw new PHPParser_Error(sprintf('"%s" method cannot be static', $this->name));
         }
     }
+
+    public function append($stmts) {
+        foreach ($stmts as $stmt)
+            $this->stmts[] = $stmt;
+    }
+
+    public function prepend($stmts) {
+        foreach ($stmts as $stmt)
+            array_unshift($this->stmts, $stmt);
+    }
+
+    public function replace($stmts) {
+        $this->stmts = $stmt;
+    }
+
+    public function getStatements() {
+        return $this->stmts;
+    }
 }

@@ -8,6 +8,10 @@ class Property_Relation {
 	 **/
 	protected $__properties;
 
+	public function __construct() {
+		$this->__properties = new SplObjectStorage();
+	}
+
 	/**
 	 * Getter for __property
 	 *
